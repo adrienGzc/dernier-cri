@@ -5,12 +5,23 @@ import * as unsplashTypes from '@dernierCri/services/unsplash/types';
 
 import { RootModel } from './types';
 
+type UnsplashState = {
+  listPhotos: [];
+};
+
+const INITIAL_STATE: UnsplashState = {
+  listPhotos: [],
+};
+
 const unsplashModel = createModel<RootModel>()({
-  state: null,
+  state: INITIAL_STATE,
+  reducers: {
+    setListPhotos: (state, payload) => ({ ...state, listPhotos: payload }),
+    reset: () => INITIAL_STATE,
+  },
   effects: (dispatch: RematchDispatch) => ({
     call: async (payload: any, _root): Promise<any> => {
       const { api } = payload;
-      const { session } = dispatch;
 
       return api
         .then((result: any) => result.data)
@@ -20,7 +31,7 @@ const unsplashModel = createModel<RootModel>()({
 
           switch (status) {
             case 403:
-              message = 'Error permission.';
+              message = 'Forbidden.';
               break;
             case 401:
               message = 'Unauthorize request.';
@@ -31,31 +42,31 @@ const unsplashModel = createModel<RootModel>()({
           return { success: false, status, message };
         });
     },
-    getListPhotos: async (
-      _payload: unsplashTypes.GetPhotosPayloadType,
-    ): Promise<{ success: boolean; message: string }> => {
-      const { api } = dispatch;
+    getListPhotos: async (payload: unsplashTypes.GetPhotosPayloadType) => {
+      const { unsplash } = dispatch;
+      const { page, perPage, orderBy } = payload;
 
       try {
-        const response = await api.call({
+        const response = await unsplash.call({
           api: unsplashService.getListPhotos({
-            page: 1,
-            perPage: 10,
-            orderBy: 'latest',
+            page,
+            perPage,
+            orderBy,
           }),
         });
 
-        if (response) {
-          return { success: true, message: 'Success' };
+        if (response && response.success === false) {
+          return {
+            success: false,
+            message: 'Request failed.',
+          };
         }
-        return {
-          success: false,
-          message: 'Oups...',
-        };
+        unsplash.setListPhotos(response);
+        return { success: true, message: 'Success' };
       } catch (error) {
         return {
           success: false,
-          message: 'Problème avec le server.',
+          message: 'Server error or bad request.',
         };
       }
     },

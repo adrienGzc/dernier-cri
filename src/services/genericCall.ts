@@ -3,9 +3,7 @@ import { queryString, parseJSON } from '@dernierCri/utils';
 
 import { PayloadType, HeaderType } from './types';
 
-const genericCall = async (
-  payload: PayloadType,
-): Promise<{ success: boolean }> => {
+const genericCall = async (payload: PayloadType): Promise<any> => {
   const {
     service = 'unsplash',
     route = '',

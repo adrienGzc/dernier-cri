@@ -12,8 +12,8 @@ interface AwesomeSplashProps extends DispatchProps {}
 const AwesomeSplash = ({ setAppStatus }: AwesomeSplashProps) => {
   useEffect(() => {
     const startupAsync = async () => {
-      await SplashScreen.preventAutoHideAsync();
-      await SplashScreen.hideAsync();
+      // await SplashScreen.preventAutoHideAsync();
+      // await SplashScreen.hideAsync();
       setAppStatus('LOADED');
     };
     startupAsync();
