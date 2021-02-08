@@ -1,5 +1,6 @@
-import { types } from '@dernierCri/constants';
 import { createModel } from '@rematch/core';
+
+import { types } from '@dernierCri/constants';
 
 import { RootModel } from './types';
 

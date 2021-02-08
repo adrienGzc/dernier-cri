@@ -22,7 +22,7 @@
   },
   "rules": {
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
 
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": [
@@ -80,6 +80,11 @@
             "position": "before"
           },
           {
+            "pattern": "@dernierCri/utils/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
             "pattern": "@dernierCri/views/**",
             "group": "internal",
             "position": "before"
@@ -91,6 +96,7 @@
       }
     ],
 
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "arrow-body-style": ["error", "as-needed"]
   }
 }
