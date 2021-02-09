@@ -6,7 +6,7 @@ import * as unsplashTypes from '@dernierCri/services/unsplash/types';
 import { RootModel } from './types';
 
 type UnsplashState = {
-  listPhotos: [];
+  listPhotos: Array<any>;
 };
 
 const INITIAL_STATE: UnsplashState = {
@@ -17,6 +17,30 @@ const unsplashModel = createModel<RootModel>()({
   state: INITIAL_STATE,
   reducers: {
     setListPhotos: (state, payload) => ({ ...state, listPhotos: payload }),
+    updatePhoto: (state, payload) => {
+      const { listPhotos } = state;
+      const { id } = payload;
+      const photoElemIndex = listPhotos.findIndex(
+        (elem: any) => elem.id === id,
+      );
+
+      console.log('INDEX: ', photoElemIndex);
+      if (photoElemIndex !== -1) {
+        const newPhotoElem = {
+          ...state.listPhotos[photoElemIndex],
+          ...payload,
+        };
+        return {
+          ...state,
+          listPhotos: [
+            ...state.listPhotos.slice(0, photoElemIndex),
+            newPhotoElem,
+            ...state.listPhotos.slice(photoElemIndex + 1),
+          ],
+        };
+      }
+      return { ...state };
+    },
     reset: () => INITIAL_STATE,
   },
   effects: (dispatch: RematchDispatch) => ({
@@ -62,6 +86,64 @@ const unsplashModel = createModel<RootModel>()({
           };
         }
         unsplash.setListPhotos(response);
+        return { success: true, message: 'Success' };
+      } catch (error) {
+        return {
+          success: false,
+          message: 'Server error or bad request.',
+        };
+      }
+    },
+    getPhoto: async (payload: unsplashTypes.GetPhotoDetailsPayloadType) => {
+      const { unsplash } = dispatch;
+      const { id } = payload;
+
+      try {
+        const response = await unsplash.call({
+          api: unsplashService.getPhotoDetails({
+            id,
+          }),
+        });
+
+        if (response && response.success === false) {
+          console.log('FAILED');
+          return {
+            success: false,
+            message: 'Request failed.',
+          };
+        }
+        console.log('OKAY');
+        unsplash.updatePhoto(response);
+        return { success: true, message: 'Success' };
+      } catch (error) {
+        return {
+          success: false,
+          message: 'Server error or bad request.',
+        };
+      }
+    },
+    getPhotoStatistics: async (
+      payload: unsplashTypes.GetPhotoDetailsPayloadType,
+    ) => {
+      const { unsplash } = dispatch;
+      const { id } = payload;
+
+      try {
+        const response = await unsplash.call({
+          api: unsplashService.getPhotoStatistics({
+            id,
+          }),
+        });
+
+        if (response && response.success === false) {
+          console.log('FAILED');
+          return {
+            success: false,
+            message: 'Request failed.',
+          };
+        }
+        console.log('OKAY');
+        unsplash.updatePhoto(response);
         return { success: true, message: 'Success' };
       } catch (error) {
         return {

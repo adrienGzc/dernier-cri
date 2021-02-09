@@ -1,41 +1,81 @@
-import React from 'react';
-import { Text, Button, ScrollView, Image } from 'react-native';
+import React, { useState } from 'react';
+import { Text, Button, ScrollView, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connect } from 'react-redux';
 
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+import { AppStackParamList } from '@dernierCri/components/Navigator/types';
+
 import { Dispatch, RootState } from '@dernierCri/services/store';
 
-interface DashboardScreenProps extends StateProps, DispatchProps {}
+import { PhotoCard } from '@dernierCri/components';
+
+import styles from './styles';
+
+interface DashboardScreenProps extends StateProps, DispatchProps {
+  navigation: StackNavigationProp<AppStackParamList, 'Gallery'>;
+  route: RouteProp<AppStackParamList, 'Gallery'>;
+}
 
 const DashboardScreen = ({
+  navigation,
+  route,
   listPhotos,
   getListPhotos,
 }: DashboardScreenProps) => {
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const { error } = route.params;
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await getPhotos();
+    setIsRefreshing(false);
+  };
+
   const getPhotos = async () => {
     await getListPhotos({
       page: 1,
       perPage: 10,
-      orderBy: 'popular',
+      orderBy: 'latest',
     });
   };
 
+  if (error) {
+    setTimeout(() => navigation.setParams({ error: undefined }), 4000);
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, paddingHorizontal: 16, marginTop: 32 }}>
-      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Gallery</Text>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Gallery</Text>
       <Button title="Fetch" onPress={getPhotos} />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {listPhotos.length > 0 ? (
+      {error && (
+        <View style={styles.erroContainer}>
+          <Text style={styles.errorText}>Error: photo not found</Text>
+        </View>
+      )}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        {listPhotos.length > 0 &&
           listPhotos.map((photo: any) => (
-            <Image
+            <PhotoCard
+              imageProps={{
+                source: {
+                  uri: photo.urls.regular,
+                },
+              }}
+              imageStyle={styles.photoCardStyle}
               key={photo.id}
-              resizeMode="cover"
-              source={{ uri: photo.urls.regular }}
-              style={{ width: '100%', height: 300, borderRadius: 10, marginBottom: 32 }}
+              onPress={() => {
+                navigation.navigate('Detail', { idPhoto: photo.id });
+              }}
             />
-          ))
-        ) : (
-          <Text>No photos</Text>
-        )}
+          ))}
       </ScrollView>
     </SafeAreaView>
   );

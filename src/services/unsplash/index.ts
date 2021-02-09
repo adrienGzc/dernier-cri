@@ -25,4 +25,11 @@ const getPhotoDetails = async ({ id }: types.GetPhotoDetailsPayloadType) =>
     method: 'GET',
   });
 
-export { getListPhotos, getPhotoDetails };
+const getPhotoStatistics = async ({ id }: types.GetPhotoDetailsPayloadType) =>
+  genericCall({
+    service: 'unsplash',
+    route: `/photos/${id}/statistics`,
+    method: 'GET',
+  });
+
+export { getListPhotos, getPhotoDetails, getPhotoStatistics };

@@ -5,5 +5,5 @@ export type GetPhotosPayloadType = {
 };
 
 export type GetPhotoDetailsPayloadType = {
-  id: number;
+  id: string;
 };
