@@ -21,6 +21,7 @@ export default StyleSheet.create<InfoTableStyleProps>({
     fontWeight: Platform.select({ ios: '600', android: 'bold' }),
     fontSize: 23,
     ...spacing.mgb2,
+    ...spacing.mgh2,
   },
   row: {
     flex: 1,
@@ -40,12 +41,14 @@ export default StyleSheet.create<InfoTableStyleProps>({
   },
   labelCol: {
     minWidth: '45%',
+    ...spacing.mgl2,
   },
   contentCol: {
     flex: 1,
+    ...spacing.mgl2,
   },
   rowLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 });

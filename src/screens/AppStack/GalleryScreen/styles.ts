@@ -13,6 +13,7 @@ interface GalleryScreenStyle {
 export default StyleSheet.create<GalleryScreenStyle>({
   container: {
     flex: 1,
+    backgroundColor: colors.WHITE,
     ...spacing.pgh2,
     ...spacing.mgt4_5,
   },

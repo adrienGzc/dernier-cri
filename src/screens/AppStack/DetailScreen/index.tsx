@@ -45,7 +45,7 @@ const DetailScreen = ({ navigation, route, listPhotos }: DetailScreenProps) => {
   return (
     <>
       <DCStatusBar />
-      <ScrollView>
+      <ScrollView style={styles.mainContainer}>
         <Image
           resizeMethod="resize"
           resizeMode="cover"
