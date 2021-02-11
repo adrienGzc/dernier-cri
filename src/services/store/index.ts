@@ -7,7 +7,7 @@ import { RootModel } from './models/types';
 
 const persistPlugin = createRematchPersist({
   key: 'root',
-  whitelist: ['unsplash'],
+  whitelist: [],
   storage: AsyncStorage,
 });
 

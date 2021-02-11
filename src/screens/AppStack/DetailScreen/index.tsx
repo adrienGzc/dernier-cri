@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import { Dimensions, Image, ScrollView } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { RouteProp } from '@react-navigation/native';
@@ -9,28 +9,23 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { AppStackParamList } from '@dernierCri/components/Navigator/types';
 
-import { Dispatch, RootState } from '@dernierCri/services/store';
+import { RootState } from '@dernierCri/services/store';
 
-interface DetailScreenProps extends StateProps, DispatchProps {
+import { DCStatusBar, InfoTable } from '@dernierCri/components';
+
+import config from './configInfoTable';
+import styles from './styles';
+
+interface DetailScreenProps extends StateProps {
   navigation: StackNavigationProp<AppStackParamList, 'Detail'>;
   route: RouteProp<AppStackParamList, 'Detail'>;
 }
 
-const DetailScreen = ({
-  navigation,
-  route,
-  listPhotos,
-  getPhotoStat,
-}: DetailScreenProps) => {
+const DetailScreen = ({ navigation, route, listPhotos }: DetailScreenProps) => {
   const { idPhoto } = route.params;
-  const [photoDetail, setPhotoDetail] = useState(undefined);
+  const [photoDetail, setPhotoDetail] = useState({});
 
   useEffect(() => {
-    const getStat = async () => {
-      await getPhotoStat({ id: idPhoto });
-    };
-    getStat();
-
     const pictureDetails = listPhotos.find(
       (photo: any) => photo.id === idPhoto,
     );
@@ -41,24 +36,29 @@ const DetailScreen = ({
       navigation.navigate('Gallery', { error: 'Photo not found' });
     }
     return () => {
-      setPhotoDetail(undefined);
+      setPhotoDetail({});
     };
   }, []);
 
-  console.log('DETAIL: ', photoDetail);
-  if (!photoDetail) return null;
+  if (!Object.keys(photoDetail).length) return <View />;
+
   return (
-    <ScrollView>
-      <Image
-        resizeMethod="resize"
-        resizeMode="cover"
-        source={{ uri: photoDetail.urls.regular }}
-        style={{
-          width: Dimensions.get('screen').width,
-          height: 300,
-        }}
-      />
-    </ScrollView>
+    <>
+      <DCStatusBar />
+      <ScrollView>
+        <Image
+          resizeMethod="resize"
+          resizeMode="cover"
+          source={{ uri: photoDetail.urls.regular }}
+          style={styles.image}
+        />
+        <View style={styles.detailsContainer}>
+          {Object.keys(photoDetail).length && (
+            <InfoTable config={config(photoDetail)} />
+          )}
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
@@ -67,9 +67,4 @@ const mapState = (state: RootState) => ({
 });
 type StateProps = ReturnType<typeof mapState>;
 
-const mapDispatch = (dispatch: Dispatch) => ({
-  getPhotoStat: dispatch.unsplash.getPhotoStatistics,
-});
-type DispatchProps = ReturnType<typeof mapDispatch>;
-
-export default connect(mapState, mapDispatch)(DetailScreen);
+export default connect(mapState)(DetailScreen);

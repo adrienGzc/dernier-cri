@@ -14,11 +14,12 @@ export default StyleSheet.create<GalleryScreenStyle>({
   container: {
     flex: 1,
     ...spacing.pgh2,
-    ...spacing.mgt3,
+    ...spacing.mgt4_5,
   },
   title: {
-    fontSize: 30,
+    fontSize: 34,
     fontWeight: 'bold',
+    ...spacing.mgb3,
   },
   photoCardStyle: {
     width: '100%',

@@ -1,6 +1,10 @@
 import { createModel, RematchDispatch } from '@rematch/core';
 
 import * as unsplashService from '@dernierCri/services/unsplash';
+import {
+  formatGetPhoto,
+  formatGetPhotoStats,
+} from '@dernierCri/services/unsplash/formatter';
 import * as unsplashTypes from '@dernierCri/services/unsplash/types';
 
 import { RootModel } from './types';
@@ -24,7 +28,6 @@ const unsplashModel = createModel<RootModel>()({
         (elem: any) => elem.id === id,
       );
 
-      console.log('INDEX: ', photoElemIndex);
       if (photoElemIndex !== -1) {
         const newPhotoElem = {
           ...state.listPhotos[photoElemIndex],
@@ -106,14 +109,12 @@ const unsplashModel = createModel<RootModel>()({
         });
 
         if (response && response.success === false) {
-          console.log('FAILED');
           return {
             success: false,
             message: 'Request failed.',
           };
         }
-        console.log('OKAY');
-        unsplash.updatePhoto(response);
+        unsplash.updatePhoto(formatGetPhoto(response));
         return { success: true, message: 'Success' };
       } catch (error) {
         return {
@@ -136,14 +137,12 @@ const unsplashModel = createModel<RootModel>()({
         });
 
         if (response && response.success === false) {
-          console.log('FAILED');
           return {
             success: false,
             message: 'Request failed.',
           };
         }
-        console.log('OKAY');
-        unsplash.updatePhoto(response);
+        unsplash.updatePhoto(formatGetPhotoStats(response));
         return { success: true, message: 'Success' };
       } catch (error) {
         return {

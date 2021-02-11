@@ -1,40 +1,19 @@
-import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { Dimensions, ImageStyle, StyleSheet, ViewStyle } from 'react-native';
 
-import { colors, spacing } from '@dernierCri/constants';
+import { spacing } from '@dernierCri/constants';
 
 interface GalleryScreenStyle {
-  container: ViewStyle;
-  title: TextStyle;
-  photoCardStyle: ImageStyle;
-  erroContainer: ViewStyle;
-  errorText: TextStyle;
+  image: ImageStyle;
+  detailsContainer: ViewStyle;
 }
 
 export default StyleSheet.create<GalleryScreenStyle>({
-  container: {
-    flex: 1,
-    ...spacing.pgh2,
-    ...spacing.mgt3,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-  photoCardStyle: {
-    width: '100%',
+  image: {
+    width: Dimensions.get('screen').width,
     height: 300,
-    borderRadius: 6,
-    ...spacing.mgb2,
+    ...spacing.mgb4,
   },
-  erroContainer: {
-    borderWidth: 3,
-    borderColor: colors.PRIMARY,
-    borderRadius: 4,
-    ...spacing.mgv2,
-    ...spacing.pg2,
-  },
-  errorText: {
-    fontSize: 14,
-    fontWeight: 'bold',
+  detailsContainer: {
+    ...spacing.mgh2,
   },
 });
